@@ -1,0 +1,49 @@
+import os
+import platform
+import shutil
+import psutil
+import time
+import subprocess
+
+def limpiar_temporales():
+    sistema = platform.system()
+    print("🔧 Limpiando archivos temporales...")
+    try:
+        if sistema == "Windows":
+            temp = os.getenv('TEMP')
+            shutil.rmtree(temp, ignore_errors=True)
+        elif sistema == "Linux":
+            os.system("rm -rf /tmp/*")
+    except Exception as e:
+        print(f"❌ Error limpiando temporales: {e}")
+
+def mostrar_uso_disco():
+    print("💾 Uso del disco:")
+    uso = psutil.disk_usage('/')
+    print(f" Total: {uso.total // (2**30)} GB")
+    print(f" Usado: {uso.used // (2**30)} GB")
+    print(f" Libre: {uso.free // (2**30)} GB")
+
+def mostrar_uptime():
+    tiempo_encendido = time.time() - psutil.boot_time()
+    horas = int(tiempo_encendido // 3600)
+    minutos = int((tiempo_encendido % 3600) // 60)
+    print(f"🕒 Uptime: {horas}h {minutos}min")
+
+def actualizar_linux():
+    if platform.system() == "Linux":
+        print("📦 Actualizando sistema...")
+        subprocess.run(["sudo", "apt", "update"])
+        subprocess.run(["sudo", "apt", "upgrade", "-y"])
+
+def main():
+    print("🛠️ AutoFixPy - Mantenimiento Automático")
+    limpiar_temporales()
+    mostrar_uso_disco()
+    mostrar_uptime()
+    if platform.system() == "Linux":
+        actualizar_linux()
+    print("✅ Mantenimiento completado.")
+
+if __name__ == "__main__":
+    main()
